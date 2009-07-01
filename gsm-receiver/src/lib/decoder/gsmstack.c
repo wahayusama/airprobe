@@ -104,7 +104,7 @@ GS_new(GS_CTX *ctx)
  * 142 bit
  */
 int
-GS_process(GS_CTX *ctx, int ts, int type, const unsigned char *src, int fn)
+GS_process(GS_CTX *ctx, int ts, int type, const unsigned char *src, int fn, int sdcch)
 {
 // 	int fn;
 	int bsic;
@@ -163,8 +163,14 @@ GS_process(GS_CTX *ctx, int ts, int type, const unsigned char *src, int fn)
 		//DEBUGF("burst count %d\n", ctx->burst_count);
 		memcpy(ts_ctx->burst + (116 * ts_ctx->burst_count), src, 58);
 		memcpy(ts_ctx->burst + (116 * ts_ctx->burst_count) + 58, src + 58 + 26, 58);
+
+		if(sdcch && ( ts_ctx->burst_count == 0) && (((fn%51)%4) != 0)){	//very dirty stopgap, I don't think it should work like this
+		  return -1;							//decoder should look for fn, timeslot nr, and channel configuration
+		}
+
 		ts_ctx->burst_count++;
 		/* Return if not enough bursts for a full gsm message */
+		
 		if (ts_ctx->burst_count < 4)
 			return 0;
 

@@ -65,6 +65,7 @@ void decrypt(const unsigned char * burst_binary, byte * KC, float * decrypted_da
   }
 }
 
+//TODO: this shouldn't be here - remove it when gsm receiver's interface will be ready
 void gsm_receiver_cf::read_key(std::string key)
 {
   int i;
@@ -75,6 +76,7 @@ void gsm_receiver_cf::read_key(std::string key)
   }
 }
 
+//TODO: this shouldn't be here - remove it when gsm receiver's interface will be ready
 void gsm_receiver_cf::process_normal_burst(burst_counter burst_nr, const unsigned char * burst_binary)
 {
   float decrypted_data[148];
@@ -126,11 +128,11 @@ void gsm_receiver_cf::process_normal_burst(burst_counter burst_nr, const unsigne
   }
 
   if (burst_nr.get_timeslot_nr() == 0) {
-//    GS_process(&d_gs_ctx, TIMESLOT0, 6, &burst_binary[3], burst_nr.get_frame_nr());
+//    GS_process(&d_gs_ctx, TIMESLOT0, 6, &burst_binary[3], burst_nr.get_frame_nr(), false);
   }
   
   if (burst_nr.get_timeslot_nr() == 4) {
-    GS_process(&d_gs_ctx, TIMESLOT0, 6, &burst_binary[3], burst_nr.get_frame_nr());
+    GS_process(&d_gs_ctx, TIMESLOT4, 6, &burst_binary[3], burst_nr.get_frame_nr(), true);
   }
 }
 //TODO: this shouldn't be here also - the same reason

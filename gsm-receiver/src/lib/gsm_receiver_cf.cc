@@ -77,14 +77,11 @@ void gsm_receiver_cf::read_key(std::string key)
 
 void gsm_receiver_cf::process_normal_burst(burst_counter burst_nr, const unsigned char * burst_binary)
 {
-//   static byte KC[] = {  0xAD, 0x6A, 0x3E, 0xC2, 0xB4, 0x42, 0xE4, 0x00 };
-//   static byte KC[] = {  0x2B, 0x08, 0x74, 0x9F, 0xDD, 0x0D, 0x9C, 0x00 };
-//   printf("%x", KC[0]);
   float decrypted_data[148];
   unsigned char * voice_frame;
 
-//   if (burst_nr.get_timeslot_nr() == 7) {
-  if (burst_nr.get_timeslot_nr() >= 1 && burst_nr.get_timeslot_nr() <= 7) {
+  int bnr = burst_nr.get_timeslot_nr();
+  if ((bnr >= 2 && bnr <= 3)||(bnr >= 5 && bnr <= 7)) {
     decrypt(burst_binary, d_KC, decrypted_data, burst_nr.get_frame_nr_mod());
 
     GSM::Time time(burst_nr.get_frame_nr(), burst_nr.get_timeslot_nr());
@@ -129,26 +126,32 @@ void gsm_receiver_cf::process_normal_burst(burst_counter burst_nr, const unsigne
   }
 
   if (burst_nr.get_timeslot_nr() == 0) {
+//    GS_process(&d_gs_ctx, TIMESLOT0, 6, &burst_binary[3], burst_nr.get_frame_nr());
+  }
+  
+  if (burst_nr.get_timeslot_nr() == 4) {
     GS_process(&d_gs_ctx, TIMESLOT0, 6, &burst_binary[3], burst_nr.get_frame_nr());
   }
 }
 //TODO: this shouldn't be here also - the same reason
 void gsm_receiver_cf::configure_receiver()
 {
-  d_channel_conf.set_multiframe_type(TSC0, multiframe_51);
+  d_channel_conf.set_multiframe_type(TIMESLOT0, multiframe_51);
 
-  d_channel_conf.set_burst_types(TSC0, TEST_CCH_FRAMES, sizeof(TEST_CCH_FRAMES) / sizeof(unsigned), normal_burst);
-  d_channel_conf.set_burst_types(TSC0, FCCH_FRAMES, sizeof(FCCH_FRAMES) / sizeof(unsigned), fcch_burst);
+  d_channel_conf.set_burst_types(TIMESLOT0, TEST_CCH_FRAMES, sizeof(TEST_CCH_FRAMES) / sizeof(unsigned), normal_burst);
+  d_channel_conf.set_burst_types(TIMESLOT0, FCCH_FRAMES, sizeof(FCCH_FRAMES) / sizeof(unsigned), fcch_burst);
 
-  d_channel_conf.set_multiframe_type(TIMESLOT1, multiframe_26);
-  d_channel_conf.set_burst_types(TIMESLOT1, TRAFFIC_CHANNEL_F, sizeof(TRAFFIC_CHANNEL_F) / sizeof(unsigned), dummy_or_normal);
+//  d_channel_conf.set_multiframe_type(TIMESLOT1, multiframe_26);
+//  d_channel_conf.set_burst_types(TIMESLOT1, TRAFFIC_CHANNEL_F, sizeof(TRAFFIC_CHANNEL_F) / sizeof(unsigned), dummy_or_normal);
   d_channel_conf.set_multiframe_type(TIMESLOT2, multiframe_26);
   d_channel_conf.set_burst_types(TIMESLOT2, TRAFFIC_CHANNEL_F, sizeof(TRAFFIC_CHANNEL_F) / sizeof(unsigned), dummy_or_normal);
 
   d_channel_conf.set_multiframe_type(TIMESLOT3, multiframe_26);
   d_channel_conf.set_burst_types(TIMESLOT3, TRAFFIC_CHANNEL_F, sizeof(TRAFFIC_CHANNEL_F) / sizeof(unsigned), dummy_or_normal);
-  d_channel_conf.set_multiframe_type(TIMESLOT4, multiframe_26);
-  d_channel_conf.set_burst_types(TIMESLOT4, TRAFFIC_CHANNEL_F, sizeof(TRAFFIC_CHANNEL_F) / sizeof(unsigned), dummy_or_normal);
+//  d_channel_conf.set_multiframe_type(TIMESLOT4, multiframe_26);
+//  d_channel_conf.set_burst_types(TIMESLOT4, TRAFFIC_CHANNEL_F, sizeof(TRAFFIC_CHANNEL_F) / sizeof(unsigned), dummy_or_normal);
+  d_channel_conf.set_multiframe_type(TIMESLOT4, multiframe_51);
+  d_channel_conf.set_burst_types(TIMESLOT4, SDCCH_SACCH_FRAMES, sizeof(SDCCH_SACCH_FRAMES) / sizeof(unsigned), dummy_or_normal);
 
   d_channel_conf.set_multiframe_type(TIMESLOT5, multiframe_26);
   d_channel_conf.set_burst_types(TIMESLOT5, TRAFFIC_CHANNEL_F, sizeof(TRAFFIC_CHANNEL_F) / sizeof(unsigned), dummy_or_normal);

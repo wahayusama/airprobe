@@ -83,7 +83,7 @@ void gsm_receiver_cf::process_normal_burst(burst_counter burst_nr, const unsigne
   unsigned char * voice_frame;
 
   int bnr = burst_nr.get_timeslot_nr();
-  if ((bnr >= 2 && bnr <= 3)||(bnr >= 5 && bnr <= 7)) {
+  if ((bnr >= 2 && bnr <= 2)||(bnr >= 5 && bnr <= 7)) {
     decrypt(burst_binary, d_KC, decrypted_data, burst_nr.get_frame_nr_mod());
 
     GSM::Time time(burst_nr.get_frame_nr(), burst_nr.get_timeslot_nr());
@@ -131,8 +131,8 @@ void gsm_receiver_cf::process_normal_burst(burst_counter burst_nr, const unsigne
 //    GS_process(&d_gs_ctx, TIMESLOT0, 6, &burst_binary[3], burst_nr.get_frame_nr(), false);
   }
   
-  if (burst_nr.get_timeslot_nr() == 4) {
-    GS_process(&d_gs_ctx, TIMESLOT4, 6, &burst_binary[3], burst_nr.get_frame_nr(), true);
+  if (burst_nr.get_timeslot_nr() == 3) {
+    GS_process(&d_gs_ctx, TIMESLOT3, 6, &burst_binary[3], burst_nr.get_frame_nr(), true);
   }
 }
 //TODO: this shouldn't be here also - the same reason
@@ -148,12 +148,12 @@ void gsm_receiver_cf::configure_receiver()
   d_channel_conf.set_multiframe_type(TIMESLOT2, multiframe_26);
   d_channel_conf.set_burst_types(TIMESLOT2, TRAFFIC_CHANNEL_F, sizeof(TRAFFIC_CHANNEL_F) / sizeof(unsigned), dummy_or_normal);
 
-  d_channel_conf.set_multiframe_type(TIMESLOT3, multiframe_26);
-  d_channel_conf.set_burst_types(TIMESLOT3, TRAFFIC_CHANNEL_F, sizeof(TRAFFIC_CHANNEL_F) / sizeof(unsigned), dummy_or_normal);
+//  d_channel_conf.set_multiframe_type(TIMESLOT3, multiframe_26);
+//  d_channel_conf.set_burst_types(TIMESLOT3, TRAFFIC_CHANNEL_F, sizeof(TRAFFIC_CHANNEL_F) / sizeof(unsigned), dummy_or_normal);
 //  d_channel_conf.set_multiframe_type(TIMESLOT4, multiframe_26);
 //  d_channel_conf.set_burst_types(TIMESLOT4, TRAFFIC_CHANNEL_F, sizeof(TRAFFIC_CHANNEL_F) / sizeof(unsigned), dummy_or_normal);
-  d_channel_conf.set_multiframe_type(TIMESLOT4, multiframe_51);
-  d_channel_conf.set_burst_types(TIMESLOT4, SDCCH_SACCH_FRAMES, sizeof(SDCCH_SACCH_FRAMES) / sizeof(unsigned), dummy_or_normal);
+  d_channel_conf.set_multiframe_type(TIMESLOT3, multiframe_51);
+  d_channel_conf.set_burst_types(TIMESLOT3, SDCCH_SACCH_FRAMES, sizeof(SDCCH_SACCH_FRAMES) / sizeof(unsigned), dummy_or_normal);
 
   d_channel_conf.set_multiframe_type(TIMESLOT5, multiframe_26);
   d_channel_conf.set_burst_types(TIMESLOT5, TRAFFIC_CHANNEL_F, sizeof(TRAFFIC_CHANNEL_F) / sizeof(unsigned), dummy_or_normal);
